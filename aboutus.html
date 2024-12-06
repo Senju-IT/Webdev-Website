@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>About Us - DS Thrift Shop</title>
+    <link rel="stylesheet" href="Final Project.css">
+</head>
+<body class="about-us-page">
+
+    <div class="main-container">
+        <div class="left-sidebar">
+            <h1>DS THRIFT SHOP</h1>
+            <div class="logo-container">
+                <img src="dslogo.png" alt="DS Thrift Shop Logo">
+            </div>
+            <div id="user-account-info" class="account-info">
+                <p id="account-name"></p>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="signupform.html" class="btn">Sign Up</a></li>
+                
+                
+                <li><a href="T-shirt.html">T-Shirts</a></li>
+                <li><a href="Jacket.html">Jacket</a></li>
+                <li><a href="Pants.html">Pants</a></li>
+                <li id="logout-btn-container" style="display: none;"><button id="logout-btn" onclick="logout()">Log Out</button></li>
+            </ul>
+        </div>
+
+        <div class="right-content">
+            <header>
+                <div class="logo">
+                    <h1>DS THRIFT SHOP</h1>
+                    <img src="dslogo.png" alt="Logo">
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </header>
+
+            <section id="aboutus">
+                <div class="aboutus-container">
+                    
+                    <h2 style="text-align: center;">About Us</h2>
+                    <p>Welcome to DS Thrift Shop! Our goal is to offer high-quality, stylish clothing sourced from "ukay-ukay" (thrift stores) and resell it at affordable prices. We specialize in handpicked items that include T-shirts, jackets, pants, and other trendy clothing. We believe in providing sustainable fashion options while offering our customers great deals on unique, second-hand clothing.</p>
+
+                    <p>Our products are carefully selected to ensure that you get the best quality. Whether you're looking for vintage pieces, casual wear, or something trendy, DS Thrift Shop has it all. We constantly update our collection to keep up with the latest fashion trends and provide you with the best choices for every occasion.</p>
+
+                    <p>At DS Thrift Shop, we believe in sustainability and the importance of reusing and recycling fashion. By purchasing second-hand items, you're not only getting great deals, but you're also helping the environment. Join us in making fashion more sustainable while getting the best deals in town!</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            const accountNameElement = document.getElementById('account-name');
+            const logoutBtnContainer = document.getElementById('logout-btn-container');
+    
+            if (loggedInUser) {
+                accountNameElement.innerHTML = `Welcome, <strong>${loggedInUser.username}</strong>!`;
+                logoutBtnContainer.style.display = 'block';
+            } else {
+                accountNameElement.innerHTML = `Hello, Guest! <a href="signupform.html" class="btn">Sign Up</a>`;
+                logoutBtnContainer.style.display = 'none';
+            }
+        };
+    
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            alert("Logged out successfully!");
+            window.location.href = "signupform.html";
+        }
+    </script>
+
+</body>
+</html>

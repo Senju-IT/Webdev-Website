@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Payment Method - DS Thrift Shop</title>
+    <link rel="stylesheet" href="Final Project.css">
+</head>
+<body>
+
+<div class="main-container">
+    <div class="left-sidebar">
+        <h1>DS THRIFT SHOP</h1>
+        <div class="logo-container">
+            <img src="dslogo.png" alt="DS Thrift Shop Logo">
+        </div>
+        <div id="user-account-info" class="account-info">
+            <p id="account-name"></p>
+        </div>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="signupform.html" class="btn">Sign Up</a></li>
+            <li><a href="T-shirt.html">T-Shirts</a></li>
+            <li><a href="Jacket.html">Jackets</a></li>
+            <li><a href="Pants.html">Pants</a></li>
+            <li id="logout-btn-container" style="display: none;">
+                <button id="logout-btn" onclick="logout()">Log Out</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="right-content">
+        <header>
+            <div class="logo">
+                <h1>DS THRIFT SHOP</h1>
+                <img src="dslogo.png" alt="Logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="aboutus.html">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </header>
+
+        <div id="payment-method">
+            <h2>Payment Method</h2>
+            <div id="cart-items"></div>
+            <h3>Total: ₱<span id="total-price">0</span></h3>
+
+            <form id="payment-form">
+                <label for="payment-method">Select Payment Method:</label>
+                <select id="payment-method">
+                    <option value="gcash">GCash</option>
+                    <option value="cod">Cash on Delivery</option>
+                    <option value="paymaya">PayMaya</option>
+                </select>
+
+                <div id="gcash-info" style="display: none;">
+                    <label for="gcash-ref">GCash Reference Number:</label>
+                    <input type="text" id="gcash-ref" name="gcash-ref" placeholder="Enter Reference Number">
+                    <label for="gcash-contact">Contact Number:</label>
+                    <input type="text" id="gcash-contact" name="gcash-contact" placeholder="Enter your contact number">
+                </div>
+
+                <div id="paymaya-info" style="display: none;">
+                    <label for="paymaya-ref">PayMaya Reference Number:</label>
+                    <input type="text" id="paymaya-ref" name="paymaya-ref" placeholder="Enter Reference Number">
+                    <label for="paymaya-contact">Contact Number:</label>
+                    <input type="text" id="paymaya-contact" name="paymaya-contact" placeholder="Enter your contact number">
+                </div>
+
+                <div id="cod-info" style="display: none;">
+                    <label for="cod-address">Delivery Address:</label>
+                    <input type="text" id="cod-address" name="cod-address" placeholder="Enter Delivery Address">
+                    <label for="cod-contact">Contact Number:</label>
+                    <input type="text" id="cod-contact" name="cod-contact" placeholder="Enter Contact Number">
+                </div>
+
+                <button type="submit">Proceed to Pay</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="payment-popup" class="payment-popup" style="display:none;">
+    <div class="popup-content">
+        <h3>Fill Your Payment Details</h3>
+        <form id="payment-details-form">
+            <div id="popup-gcash-info" style="display:none;">
+                <label for="popup-gcash-ref">GCash Reference Number:</label>
+                <input type="text" id="popup-gcash-ref" name="popup-gcash-ref" placeholder="Enter Reference Number">
+                <label for="popup-gcash-contact">Contact Number:</label>
+                <input type="text" id="popup-gcash-contact" name="popup-gcash-contact" placeholder="Enter your contact number">
+            </div>
+
+            <div id="popup-paymaya-info" style="display:none;">
+                <label for="popup-paymaya-ref">PayMaya Reference Number:</label>
+                <input type="text" id="popup-paymaya-ref" name="popup-paymaya-ref" placeholder="Enter Reference Number">
+                <label for="popup-paymaya-contact">Contact Number:</label>
+                <input type="text" id="popup-paymaya-contact" name="popup-paymaya-contact" placeholder="Enter your contact number">
+            </div>
+
+            <div id="popup-cod-info" style="display:none;">
+                <label for="popup-cod-address">Delivery Address:</label>
+                <input type="text" id="popup-cod-address" name="popup-cod-address" placeholder="Enter Delivery Address">
+                <label for="popup-cod-contact">Contact Number:</label>
+                <input type="text" id="popup-cod-contact" name="popup-cod-contact" placeholder="Enter Contact Number">
+            </div>
+
+            <button type="submit">Confirm Payment</button>
+        </form>
+        <button onclick="closePaymentPopup()">Close</button>
+    </div>
+</div>
+
+<script>
+    window.onload = function () {
+        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+        const accountNameElement = document.getElementById('account-name');
+        const logoutBtnContainer = document.getElementById('logout-btn-container');
+
+        if (!loggedInUser) {
+            window.location.href = "signupform.html";
+            return;
+        }
+
+        accountNameElement.innerHTML = `Welcome, <strong>${loggedInUser.username}</strong>!`;
+        logoutBtnContainer.style.display = 'block';
+
+        const cartItemsContainer = document.getElementById('cart-items');
+        const totalPriceElement = document.getElementById('total-price');
+        const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+
+        let total = 0;
+        cartItemsContainer.innerHTML = '';
+
+        cart.forEach(item => {
+            const cartItem = document.createElement('div');
+            cartItem.textContent = `${item.name} - ₱${item.price}`;
+            cartItemsContainer.appendChild(cartItem);
+            total += parseInt(item.price);
+        });
+
+        totalPriceElement.textContent = total;
+
+        const paymentMethodSelect = document.getElementById('payment-method');
+        paymentMethodSelect.addEventListener('change', function () {
+            const gcashInfo = document.getElementById('gcash-info');
+            const paymayaInfo = document.getElementById('paymaya-info');
+            const codInfo = document.getElementById('cod-info');
+
+            if (this.value === 'gcash') {
+                gcashInfo.style.display = 'block';
+                paymayaInfo.style.display = 'none';
+                codInfo.style.display = 'none';
+            } else if (this.value === 'paymaya') {
+                paymayaInfo.style.display = 'block';
+                gcashInfo.style.display = 'none';
+                codInfo.style.display = 'none';
+            } else if (this.value === 'cod') {
+                codInfo.style.display = 'block';
+                gcashInfo.style.display = 'none';
+                paymayaInfo.style.display = 'none';
+            } else {
+                gcashInfo.style.display = 'none';
+                paymayaInfo.style.display = 'none';
+                codInfo.style.display = 'none';
+            }
+        });
+
+        paymentMethodSelect.dispatchEvent(new Event('change'));
+    };
+
+    const paymentForm = document.getElementById('payment-form');
+    paymentForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        document.getElementById('payment-popup').style.display = 'flex';
+    });
+
+    function closePaymentPopup() {
+        document.getElementById('payment-popup').style.display = 'none';
+    }
+
+    const paymentDetailsForm = document.getElementById('payment-details-form');
+    paymentDetailsForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const selectedPaymentMethod = document.getElementById('payment-method').value;
+        let referenceNumber = '';
+        let address = '';
+        let contactNumber = '';
+        let isValid = true;
+
+        if (selectedPaymentMethod === 'gcash') {
+            referenceNumber = document.getElementById('popup-gcash-ref').value;
+            contactNumber = document.getElementById('popup-gcash-contact').value;
+            if (referenceNumber.trim() === '' || contactNumber.trim() === '') {
+                isValid = false;
+            }
+        } else if (selectedPaymentMethod === 'paymaya') {
+            referenceNumber = document.getElementById('popup-paymaya-ref').value;
+            contactNumber = document.getElementById('popup-paymaya-contact').value;
+            if (referenceNumber.trim() === '' || contactNumber.trim() === '') {
+                isValid = false;
+            }
+        } else if (selectedPaymentMethod === 'cod') {
+            address = document.getElementById('popup-cod-address').value;
+            contactNumber = document.getElementById('popup-cod-contact').value;
+            if (address.trim() === '' || contactNumber.trim() === '') {
+                isValid = false;
+            }
+        }
+
+        if (isValid) {
+            alert('Thank you for your purchase! It will be delivered in a few days.');
+            closePaymentPopup();
+        } else {
+            alert('Please fill in all fields.');
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('loggedInUser');
+        alert("Logged out successfully!");
+        window.location.href = "signupform.html";
+    }
+</script>
+</body>
+</html>

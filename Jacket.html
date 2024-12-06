@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jackets - DS Thrift Shop</title>
+    <link rel="stylesheet" href="Final Project.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="left-sidebar">
+            <h1>DS THRIFT SHOP</h1>
+            
+            <div class="logo-container">
+                <img src="dslogo.png" alt="DS Thrift Shop Logo">
+            </div>
+            <div id="user-account-info" class="account-info">
+                <p id="account-name"></p>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="signupform.html" class="btn">Sign Up</a></li>
+                
+                <li><a href="#accountdetails">Account details</a></li>
+                <li><a href="T-shirt.html">T-Shirts</a></li>
+                <li><a href="Jacket.html">Jacket</a></li>
+                <li><a href="Pants.html">Pants</a></li>
+                <li id="logout-btn-container" style="display: none;"><button id="logout-btn" onclick="logout()">Log Out</button></li>
+            </ul>
+        </div>
+
+        <div class="right-content">
+            <header>
+                <div class="logo">
+                    <h1>DS THRIFT SHOP</h1>
+                    <img src="dslogo.png" alt="Logo">
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="aboutus.html">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </header>
+
+        
+            <div class="floating-cart-container">
+                <button id="toggle-cart-btn" onclick="toggleCart()">Cart</button>
+                <div id="floating-cart" class="floating-cart">
+                    <h3>Your Cart</h3>
+                    <ul id="cart-items"></ul>
+                    <button onclick="checkout()">Checkout</button>
+                </div>
+            </div>
+            
+
+       
+            <section id="related-products">
+                <div class="product-container">
+                    <div class="product-card">
+                        <img src="Jacket 1.jfif" alt="Bomber Jacket">
+                        <h3>Bomber</h3>
+                        <p>₱300</p>
+                        <button class="btn add-to-cart" data-product="Bomber Jacket" data-price="300">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="Nike techfleece Jacket.jpg" alt="Nike techfleece">
+                        <h3>Nike techfleece</h3>
+                        <p>₱400</p>
+                        <button class="btn add-to-cart" data-product="Nike techfleece Jacket" data-price="400">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="Nike early 00`s reflectorized windbreaker.jpg" alt="Nike early">
+                        <h3>Nike early 00s reflectorized windbreaker</h3>
+                        <p>₱600</p>
+                        <button class="btn add-to-cart" data-product="Nike early 00s reflectorized windbreaker" data-price="600">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="nike y2k.jpg" alt="Nike y2k">
+                        <h3>Nike y2k</h3>
+                        <p>₱1800</p>
+                        <button class="btn add-to-cart" data-product="Nike y2k" data-price="1800">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="Nike vintage boot.jpg" alt="Nike vintage">
+                        <h3>Nike vintage boot</h3>
+                        <p>₱500</p>
+                        <button class="btn add-to-cart" data-product="Nike vintage boot" data-price="500">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="big swoosh.jpg" alt="big swoosh">
+                        <h3>Big Swoosh</h3>
+                        <p>₱500</p>
+                        <button class="btn add-to-cart" data-product="Big Swoosh" data-price="500">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="Nike tri-tone.jpg" alt="Nike tri-tone">
+                        <h3>Nike tri-tone</h3>
+                        <p>₱450</p>
+                        <button class="btn add-to-cart" data-product="Nike tri-tone" data-price="450">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="Stussy jacket.jpg" alt="Stussy Jacket">
+                        <h3>Stussy</h3>
+                        <p>₱700</p>
+                        <button class="btn add-to-cart" data-product="Stussy Jacket" data-price="700">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="Nike Wildcats bomber jacket.jpg" alt="Nike Wildcats">
+                        <h3>Nike Wildcats bomber Jacket</h3>
+                        <p>₱1000</p>
+                        <button class="btn add-to-cart" data-product="Nike Wildcats bomber Jacket" data-price="1000">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="Nike Windbreaker.jpg" alt="Nike Windbreaker">
+                        <h3>Nike Windbreaker</h3>
+                        <p>₱900</p>
+                        <button class="btn add-to-cart" data-product="Nike Windbreaker" data-price="900">Add to Cart</button>
+                    </div>
+                </div>
+            
+             
+              
+    <script>
+        const cartItems = document.getElementById('cart-items');
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+
+       
+        function updateCart() {
+            const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+            cartItems.innerHTML = ''; 
+            cart.forEach(item => {
+                const cartItem = document.createElement('li');
+                cartItem.textContent = `${item.name} - ₱${item.price}`;
+                cartItems.appendChild(cartItem);
+            });
+        }
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const productName = this.getAttribute('data-product');
+                const productPrice = this.getAttribute('data-price');
+                const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+                cart.push({ name: productName, price: productPrice });
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                updateCart();
+            });
+        });
+
+        
+        window.onload = function () {
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            const accountNameElement = document.getElementById('account-name');
+            const logoutBtnContainer = document.getElementById('logout-btn-container');
+
+            if (loggedInUser) {
+                accountNameElement.innerHTML = `Welcome, <strong>${loggedInUser.username}</strong>!`;
+                logoutBtnContainer.style.display = 'block';
+            } else {
+                accountNameElement.innerHTML = `Hello, Guest! <a href="signupform.html" class="btn">Sign Up</a>`;
+                logoutBtnContainer.style.display = 'none';
+            }
+
+            updateCart(); 
+        };
+
+      
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            alert("Logged out successfully!");
+            window.location.href = "signupform.html";
+        }
+
+      
+        function checkout() {
+            const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+            } else {
+                alert("Proceeding to checkout...");
+                window.location.href = "paymentmethod.html";
+            }
+        }
+
+
+  
+function toggleCart() {
+    const cart = document.getElementById('floating-cart');
+    cart.style.display = cart.style.display === 'block' ? 'none' : 'block';
+    updateCart(); 
+}
+
+
+function updateCart() {
+    const cartItems = document.getElementById('cart-items');
+    const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+    cartItems.innerHTML = '';  
+    cart.forEach((item, index) => {
+        const cartItem = document.createElement('li');
+        cartItem.textContent = `${item.name} - ₱${item.price}`;
+        
+     
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'Remove';
+        removeButton.classList.add('remove-item');
+        
+      
+        removeButton.addEventListener('click', function () {
+            removeFromCart(index);
+        });
+
+        cartItem.appendChild(removeButton);
+        cartItems.appendChild(cartItem);
+    });
+}
+
+
+function removeFromCart(index) {
+    const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+    cart.splice(index, 1);  
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+    updateCart();  
+}
+
+
+
+function checkout() {
+    const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+    
+ 
+    if (cart.length === 0) {
+        alert("Please add items to the cart first before you check out.");
+    } else {
+        window.location.href = "paymentmethod.html";
+    }
+}
+
+
+    </script>
+</body>
+</html>
